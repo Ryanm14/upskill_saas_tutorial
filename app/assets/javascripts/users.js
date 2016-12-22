@@ -2,7 +2,7 @@
 //Document Ready
 $(document).on('turbolinks:load', function(){
   var theForm = $('#pro_form');  
-  var sumbitButton = $('#form-sumbit-btn');
+  var sumbitButton = $('#form-signup-btn');
   
   //Set Stripe public key
   Stripe.setPublishableKey( $('meta[name="stripe-key"]').attr('content'));
@@ -26,7 +26,7 @@ $(document).on('turbolinks:load', function(){
       alert('The credit card number appears to be invalid')
     }
     
-    if(!Stripe.card.validateCvcNum(cvcNum)){
+    if(!Stripe.card.validateCVC(cvcNum)){
       error = true;
       alert('The CVC Number appears to be invalid')
     }
@@ -53,14 +53,12 @@ $(document).on('turbolinks:load', function(){
   });
   
   //Stripe will return a card token
-  function stripeResponseHandler(status, response){
-    //Get the token from the response
+ function stripeResponseHandler(status, response) {
+    //Get the token from the response.
     var token = response.id;
-    
-    //Inject card token as a hidden field
-    theForm.append( $('<input tpye="hidden" name="user[stripe_card_token]">').val(token));
-    
-    //Sumbit form to rails app
-    theForm.get(0).sumbit();
+    //Inject the card token in a hidden field.
+    theForm.append( $('<input type="hidden" name="user[stripe_card_token]">').val(token) );
+    //Submit form to our Rails app.
+    theForm.get(0).submit();
   }
-})
+});
