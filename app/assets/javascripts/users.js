@@ -11,6 +11,7 @@ $(document).on('turbolinks:load', function(){
   sumbitButton.click(function(event){
      //prevent submission
     event.preventDefault();
+    sumbitButton.val("Proccessing").prop('disabled', true);
     
     //Collect the credit card fields
     var ccNum = $('#card_number').val(), 
@@ -18,18 +19,48 @@ $(document).on('turbolinks:load', function(){
       expMonth = $('#card_month').val(),
       expYear = $('#card_year').val();
       
+    //Use Stripe to check for card errors
+    var error = false;
+    if(!Stripe.card.validateCardNumber(ccNum)){
+      error = true;
+      alert('The credit card number appears to be invalid')
+    }
+    
+    if(!Stripe.card.validateCvcNum(cvcNum)){
+      error = true;
+      alert('The CVC Number appears to be invalid')
+    }
+    
+    if(!Stripe.card.validateExpiry(expMonth, expYear)){
+      error = true;
+      alert('The expiration date appears to be invalid')
+    }
+      
     //Send card info to stripe
-    Stripe.createToken({
-      number: ccNum,
-      cvc: cvcNum,
-      exp_month: expMonth,
-      exp_year: expYear
-    }, stripeResponseHandler);
+    if(error){
+      //If there are card errors
+      sumbitButton.prop('disabled',false).val("Sign Up");
+    } else {
+      Stripe.createToken({
+          number: ccNum,
+          cvc: cvcNum,
+          exp_month: expMonth,
+          exp_year: expYear
+      }, stripeResponseHandler);
+    }
+    
+    return false;
   });
- 
   
- 
   //Stripe will return a card token
-  //Inject card token as hidden field
-  //Sumbit form to rails app
+  function stripeResponseHandler(status, response){
+    //Get the token from the response
+    var token = response.id;
+    
+    //Inject card token as a hidden field
+    theForm.append( $('<input tpye="hidden" name="user[stripe_card_token]">').val(token));
+    
+    //Sumbit form to rails app
+    theForm.get(0).sumbit();
+  }
 })
