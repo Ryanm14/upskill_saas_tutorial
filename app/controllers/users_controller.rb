@@ -5,4 +5,9 @@ class UsersController < ApplicationController
   def show
     @user = User.find(params[:id])
   end
+  
+  #GET Request for all Users
+  def index
+    
+  end
 end
