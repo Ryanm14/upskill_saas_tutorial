@@ -19,6 +19,13 @@ class ProfilesController < ApplicationController
     end
   end
   
+  #GET Request for edit profile
+  def edit
+    @user = User.find( params[:user_id] )
+    # Create profile linked to this specific user
+    @profile = @user.profile
+  end
+  
   private
     def profile_params
       params.require(:profile).permit(:first_nsame, :last_name, :avatar, :job_title, :phone_number, :contact_email, :description)
