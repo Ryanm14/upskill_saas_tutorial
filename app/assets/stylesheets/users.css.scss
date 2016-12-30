@@ -1,6 +1,7 @@
 .avatar-show-img {
   width: 128px;
   height: 128px;
+  border-radius: 50%;
 }
 
 .well.profile-block{
@@ -29,4 +30,13 @@
   background-color: #337ab7;
   color: white;
   text-align: center;
+}
+
+.user-index-avatar {
+  width: 128px;
+  height: 128px;
+}
+
+.well.white-bg {
+  background-color: white;
 }
